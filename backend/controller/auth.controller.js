@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import bcrypt from 'bcryptjs'
 export const signup= async(req,res)=>{
     try {
+        // console.log(req.body);
         const {userName,email,password} = req.body;
         
         const checkexistuserName = await User.findOne({userName})

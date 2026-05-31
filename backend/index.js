@@ -4,6 +4,7 @@ import connectDb from './config/db.js';
 import dns from 'dns'
 import authRouter from './routes/auth.router.js';
 import cookieParser from 'cookie-parser';
+import cors from 'cors'
 
 dns.setServers(["1.1.1.1","8.8.8.8"])
 
@@ -13,6 +14,11 @@ const port= process.env.PORT
 
 app.use(express.json());
 app.use(cookieParser());
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+}));
 
 app.use("/api/auth",authRouter)
 
