@@ -1,10 +1,14 @@
 import React from 'react'
 import axios from 'axios';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setuserData } from '../redux/userSlice.js';
 function SignIn() {
+   let dispatch = useDispatch();
     const [email, setemail] = useState('');
      const [password, setpassword] = useState('');
-  
+    let {userData} = useSelector(state=>state.user);
+    console.log(userData);
   const signinHandler = async (e) => {
     e.preventDefault();
      try {
@@ -13,7 +17,8 @@ function SignIn() {
               },{
                 withCredentials: true
                })
-             console.log(result);
+              dispatch(setuserData(result.data));
+             console.log(result.data);
 
             } catch (error) {
               console.log(error);

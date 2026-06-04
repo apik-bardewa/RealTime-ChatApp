@@ -5,6 +5,7 @@ import dns from 'dns'
 import authRouter from './routes/auth.router.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
+import userRouter from './routes/user.router.js';
 
 dns.setServers(["1.1.1.1","8.8.8.8"])
 
@@ -21,6 +22,7 @@ app.use(cors({
 }));
 
 app.use("/api/auth",authRouter)
+app.use("/api/user",userRouter)
 
 app.get("/",(req,res)=>{
     res.send("hello guuys")

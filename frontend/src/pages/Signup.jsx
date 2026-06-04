@@ -3,12 +3,16 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setuserData } from "../redux/userSlice.js";
 
 const Signup = () => {
     const [userName, setuserName] = useState('');
     const [email, setemail] = useState('');
     const [password, setpassword] = useState('');
- 
+    let dispatch = useDispatch();
+    let {userData} =useSelector(state=>state.user);
+    console.log(userData);
   const  navigate = useNavigate();
   
   const handlerSignup = async (e) => {
@@ -19,7 +23,8 @@ const Signup = () => {
               },{
                 withCredentials: true
                })
-             console.log(result);
+             dispatch(setuserData(result.data))
+             console.log(result.data);
 
             } catch (error) {
               console.log(error);
