@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 // import { setprofileData } from "../redux/usrSlice";
 import axios from "axios";
 import { setuserData } from "../redux/userSlice";
-
+import { serverurl } from "../main";
 function Profile() {
   const dispatch = useDispatch();
   const { profileData } = useSelector((state) => state.user);
@@ -12,9 +12,6 @@ function Profile() {
   const [form, setForm] = useState({
     name: "",
     userName: "",
-    bio: "",
-    profession: "",
-    gender: "",
     photo: null,
     preview:
       "https://images.pexels.com/photos/32703420/pexels-photo-32703420.jpeg",
@@ -77,9 +74,13 @@ function Profile() {
   const handleSubmit =async (e) => {
     e.preventDefault();
     
-    const datafromform = await axios.post("http://localhost:8000/api/user/editProfile",form,{withCredentials:true});
-    console.log("Updated Profile:", datafromform);    // TODO: dispatch update profile API
+    // const datafromform = await axios.post("http://localhost:8000/api/user/editProfile",form,{withCredentials:true});
+    // console.log("Updated Profile:", datafromform);    // TODO: dispatch update profile API
   };
+  const handleForm =async ()=>{
+    const datafromform = await axios.post(`${serverurl}/api/user/editprofile`,form,{withCredentials:true});
+    console.log("Updated Profile:", datafromform);
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-white to-slate-100 p-4">
@@ -212,6 +213,7 @@ function Profile() {
 
             <button
               type="submit"
+              onClick={handleForm}
               className="w-1/2 py-2 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition shadow-md"
             >
               Update
