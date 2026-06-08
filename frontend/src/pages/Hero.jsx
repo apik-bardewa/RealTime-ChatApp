@@ -1,49 +1,64 @@
-import React, { useState, useEffect } from 'react';
-
-function Hero() {
-  const fullText = "Welcome to Real Chat Application";
-  const [displayedText, setDisplayedText] = useState("");
-  const [loopCount, setLoopCount] = useState(0);
-
-  useEffect(() => {
-    // Stop completely after 5 loops
-    if (loopCount >= 2) return;
-
-    let index = 0;
-    setDisplayedText(""); // Reset text completely before typing starts
-
-    const typingInterval = setInterval(() => {
-      // Use index + 1 to ensure the current character is immediately captured
-      if (index <= fullText.length) {
-        setDisplayedText(fullText.slice(0, index));
-        index++;
-      } else {
-        clearInterval(typingInterval);
-        
-        // Wait 1.5 seconds at the end of the sentence, then restart
-        setTimeout(() => {
-          setLoopCount((prevCount) => prevCount + 1);
-        }, 1500); 
-      }
-    }, 90); // Slightly adjusted speed for ultra-smooth rendering
-
-    return () => clearInterval(typingInterval);
-  }, [loopCount]); 
-
+const Hero = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[40vh] mt-20 md:mt-32 px-4 text-center select-none">
-      {/* Container with a fixed minimum height prevents layout shifting */}
-      <div className="flex items-center justify-center w-full min-h-[4rem]">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white transition-colors duration-300">
-          <span>{displayedText}</span>
-          {/* Active Blinking Cursor */}
-          <span className="inline-block w-[3px] h-[2rem] sm:h-[2.6rem] md:h-[3.2rem] ml-1 bg-indigo-500 animate-pulse">
-            |
+    <section className="relative min-h-screen flex items-center justify-center bg-slate-950 text-center overflow-hidden px-6">
+
+      {/* Background Glow */}
+      <div className="absolute top-20 left-10 w-72 h-72 bg-indigo-600/20 rounded-full blur-3xl"></div>
+
+      <div className="absolute bottom-10 right-10 w-72 h-72 bg-violet-600/20 rounded-full blur-3xl"></div>
+
+      <div className="max-w-4xl z-10">
+
+        <span className="inline-block px-4 py-2 rounded-full border border-slate-700 text-slate-400 text-sm mb-6">
+          🚀 NOW LIVE • VERSION 2.0
+        </span>
+
+        <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
+          Build Something
+          <span className="block bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            Extraordinary
           </span>
         </h1>
-      </div>
-    </div>
-  );
-}
 
-export default Hero
+        <p className="text-slate-400 text-lg md:text-xl mt-6 max-w-2xl mx-auto">
+          A modern platform that empowers creators, developers and innovators
+          to build beautiful real-time chat experiences.
+        </p>
+
+        <div className="flex justify-center gap-4 mt-10 flex-wrap">
+          <a
+            href="/signup"
+            className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-violet-500 text-white"
+          >
+            Get Started
+          </a>
+
+          <a
+            href="#about"
+            className="px-8 py-3 rounded-xl border border-slate-700 text-slate-300"
+          >
+            Learn More
+          </a>
+        </div>
+
+        {/* Stats */}
+        <div className="flex flex-wrap justify-center gap-12 mt-16 border-t border-slate-800 pt-8">
+          {[
+            ["12K+", "Users"],
+            ["99.9%", "Uptime"],
+            ["4.9★", "Rating"],
+          ].map(([value, label]) => (
+            <div key={label}>
+              <h3 className="text-3xl font-bold text-indigo-400">
+                {value}
+              </h3>
+              <p className="text-slate-500 text-sm">{label}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default Hero;
