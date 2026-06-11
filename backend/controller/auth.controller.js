@@ -59,9 +59,14 @@ export const login= async(req,res)=>{
         
         const isMatch =await bcrypt.compare(password,user.password);
          if(!isMatch){
-            return res.status(400).json({msg:"incorrect password"})
-         }
-
+            // return res.status(400).json({msg:"incorrect password"})
+            let err = {
+                status:400,
+                message:"incorrec password or something went wroung",
+                extraInfo:"password and email not matched"
+            }
+            next(err);
+        }
         const token = await genToken(user._id)
 
         res.cookie("token",token,{
@@ -73,7 +78,14 @@ export const login= async(req,res)=>{
         return res.status(200).json(user);
         
     } catch (error) {
-        return res.status(500).json({msg:`login error ${error}`})
+        // return res.status(500).json({msg:`login error ${error}`})
+        const err = {
+            status :500,
+            message: "login erorr",
+            extraInfo: error.message
+        }
+
+        next(err);
     }
 }
 

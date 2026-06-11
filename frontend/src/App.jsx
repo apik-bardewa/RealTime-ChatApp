@@ -7,10 +7,11 @@ import Signup from './pages/Signup'
 import Signout from './pages/Signout'
 import Profile from './pages/Profile'
 import Home from './pages/Home'
-// import getCurrentUser from './pages/customHooks/getCurrentUser'
+import getCurrentUser from './pages/customHooks/getCurrentUser.jsx'
+
 
 function App() {
-  // getCurrentUser();
+  getCurrentUser();
   return (
     <div>
         <Routes>

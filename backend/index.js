@@ -6,6 +6,7 @@ import authRouter from './routes/auth.router.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import userRouter from './routes/user.router.js';
+import errorHandler from './middleware/error.middleware.js';
 
 dns.setServers(["1.1.1.1","8.8.8.8"])
 
@@ -28,6 +29,7 @@ app.get("/",(req,res)=>{
     res.send("hello guuys")
 })
 
+app.use(errorHandler);
 app.listen(port,()=>{
     console.log("server is listening at port",port);
     connectDb();
