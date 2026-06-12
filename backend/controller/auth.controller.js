@@ -34,7 +34,7 @@ export const signup= async(req,res)=>{
         res.cookie("token",token,{
             httpOnly:true,
             mazAge:7*24*60*60*1000,
-            sameSite:"Strict",
+            sameSite:"lax",
             secure:false
         })
         return res.status(201).json(user);
@@ -72,7 +72,7 @@ export const login= async(req,res)=>{
         res.cookie("token",token,{
             httpOnly:true,
             mazAge:7*24*60*60*1000,
-            sameSite:"Strict",
+            sameSite:"lax",
             secure:false
         })
         return res.status(200).json(user);
@@ -90,12 +90,13 @@ export const login= async(req,res)=>{
 }
 
 
-export const logout = (req,res)=>{
-    try {
-        res.clearCookie("token");
-        return res.status(200).json({msg:" user is logout successfully"})
-    } catch (error) {
-         return res.status(200).json({msg:`logout error${error}`})
-    }
-    
-}
+export const logout = (req, res) => {
+    res.clearCookie("token", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: false,
+        path: "/"
+    });
+
+    return res.status(200).json({ msg: "user is logout successfully" });
+};

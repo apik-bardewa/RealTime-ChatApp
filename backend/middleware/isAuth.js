@@ -1,21 +1,37 @@
-import jwt  from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
-const isAuth =async (req,res,next)=>{
+const isAuth = (req, res, next) => {
     try {
-        let token = req.cookies.token
-        if(!token){
-            return res.status(400).json({msg:"token not found user not login"});
+        const token = req.cookies?.token;
+
+        console.log("cookies:", req.cookies);
+
+        if (!token) {
+            return res.status(400).json({
+                msg: "token not found, user not logged in"
+            });
         }
-        let verifyToken =await jwt.verify(token,process.env.JWT_SECRET)
-        console.log(verifyToken);
 
-        req.userId = verifyToken.userId;
-        next()
-        
+        const verifyToken = jwt.verify(token, process.env.JWT_SECRET);
+
+        console.log("decoded token:", verifyToken);
+
+        // ✅ FIX: support both possible keys
+        req.userId = verifyToken.userId || verifyToken.userid;
+
+        if (!req.userId) {
+            return res.status(400).json({
+                msg: "Invalid token payload: userId missing"
+            });
+        }
+
+        next();
+
     } catch (error) {
-         return res.status(500).json({msg:`isAuth erorr detected ${error}`});
-
+        return res.status(500).json({
+            msg: `isAuth error detected: ${error.message}`
+        });
     }
-}
+};
 
 export default isAuth;

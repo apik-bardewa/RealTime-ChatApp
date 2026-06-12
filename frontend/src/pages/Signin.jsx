@@ -3,7 +3,9 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setuserData } from '../redux/userSlice.js';
+import { useNavigate } from 'react-router-dom';
 function SignIn() {
+   let navigate= useNavigate();
    let dispatch = useDispatch();
     const [email, setemail] = useState('');
      const [password, setpassword] = useState('');
@@ -19,7 +21,7 @@ function SignIn() {
                })
               dispatch(setuserData(result.data));
              console.log(result.data);
-
+            navigate('/dashboard')
             } catch (error) {
               console.log(error);
             }

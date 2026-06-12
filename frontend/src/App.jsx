@@ -8,6 +8,8 @@ import Signout from './pages/Signout'
 import Profile from './pages/Profile'
 import Home from './pages/Home'
 import getCurrentUser from './pages/customHooks/getCurrentUser.jsx'
+// import Afterlogin from './pages/Afterlogin.jsx'
+import Profilechat from './pages/Profilechat.jsx'
 
 
 function App() {
@@ -20,6 +22,7 @@ function App() {
           <Route path='/signout' element={<Signout/>}/>
           <Route path='/profile' element={<Profile/>}/>
           <Route path='/' element={<Home/>}/>
+          <Route path='/dashboard' element={<Profilechat/>}/>
 
         </Routes>
     </div>

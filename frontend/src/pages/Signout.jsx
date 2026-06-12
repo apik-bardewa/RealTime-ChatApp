@@ -6,7 +6,7 @@ function Signout() {
 
   const navigate = useNavigate()
   const yesHandler = async ()=>{
-    let r=await axios.get(`${serverurl}/api/auth/signout`)
+    let r=await axios.get(`${serverurl}/api/auth/signout`,{withCredentials:true})
     console.log(r.data);
   }
 
