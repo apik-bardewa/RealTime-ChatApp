@@ -1,16 +1,17 @@
 import React from 'react'
 import axios from 'axios';
 import { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 import { setuserData } from '../redux/userSlice.js';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
 function SignIn() {
    let navigate= useNavigate();
    let dispatch = useDispatch();
     const [email, setemail] = useState('');
      const [password, setpassword] = useState('');
-    let {userData} = useSelector(state=>state.user);
-    console.log(userData);
+    // let {userData} = useSelector(state=>state.user.userData);
+    // console.log(userData);
   const signinHandler = async (e) => {
     e.preventDefault();
      try {
@@ -19,8 +20,10 @@ function SignIn() {
               },{
                 withCredentials: true
                })
+              //  const { password, ...safeUser } = result.data;
               dispatch(setuserData(result.data));
-             console.log(result.data);
+              console.log(result.data);
+
             navigate('/dashboard')
             } catch (error) {
               console.log(error);

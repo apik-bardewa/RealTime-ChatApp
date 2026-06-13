@@ -2,11 +2,14 @@ import React from 'react'
 import axios from 'axios'
 import { serverurl } from '../main'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { setuserData } from '../redux/userSlice'
 function Signout() {
-
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const yesHandler = async ()=>{
     let r=await axios.get(`${serverurl}/api/auth/signout`,{withCredentials:true})
+    dispatch(setuserData(null));
     console.log(r.data);
   }
 
