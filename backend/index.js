@@ -7,6 +7,8 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors'
 import userRouter from './routes/user.router.js';
 import errorHandler from './middleware/error.middleware.js';
+import rateLimit from 'express-rate-limit'
+
 
 dns.setServers(["1.1.1.1","8.8.8.8"])
 
@@ -22,8 +24,18 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
 }));
 
+
+const limiter = rateLimit({
+	windowMs: 1 * 60 * 1000, // 15 minutes
+	limit: 10, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+	message:"To many request from your ip,try again later" 
+})
+
+app.use(limiter)
+
 app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
+
 
 app.get("/",(req,res)=>{
     res.send("hello guuys")
