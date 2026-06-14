@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FaPlus } from "react-icons/fa6";
+import { IoIosMore } from "react-icons/io";
+
 export default function App() {
   const userInfo = useSelector(state=>state.user.userData)
   const [messages, setMessages] = useState([
@@ -59,13 +60,15 @@ export default function App() {
 
         {/* Input Box */}
         <div className="p-3 border-t flex gap-2">
-          <div>
-            <FontAwesomeIcon icon={byPrefixAndName.fas['plus']} />
+          <div className="flex">
+            <label className="ml-2 mt-2"><FaPlus /></label>
+            <label className="ml-5 mt-2"><IoIosMore /></label>
+
           </div>
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            className="ml-[100px] flex-1 border rounded px-3 py-2"
+            className="ml-[10px] flex-1 border rounded px-3 py-2"
             placeholder="Type a message..."
           />
           <button
