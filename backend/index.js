@@ -27,7 +27,7 @@ app.use(cors({
 
 const limiter = rateLimit({
 	windowMs: 1 * 60 * 1000, // 15 minutes
-	limit: 10, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+	limit: 2, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
 	message:"To many request from your ip,try again later" 
 })
 

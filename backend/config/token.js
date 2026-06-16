@@ -9,5 +9,4 @@ const genToken = async(userid)=>{
         return null;
     }
 }
-
 export default genToken;
