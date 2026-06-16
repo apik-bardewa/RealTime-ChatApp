@@ -18,21 +18,22 @@ function Profile() {
   });
 
   // Fetch profile from API and store in Redux
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:8000/api/user/profile`,
-          { withCredentials: true }
-        );
-        dispatch(setuserData(res.data));
-      } catch (err) {
-        console.error(err);
-      }
-    };
+//   useEffect(() => {
+//     const fetchProfile = async () => {
+//       try {
+//         const res = await axios.get(
+//           `http://localhost:8000/api/user/profile`,
+//           { withCredentials: true }
+//         );
+//         dispatch(setuserData(res.data));
+//       } catch (err) {
+//         console.error(err);
+//       }
 
-    // if (userName) fetchProfile();
-  }, []);
+//     };
+
+//     // if (userName) fetchProfile();
+//   }, []);
 
   // Update form state when Redux profileData changes
   useEffect(() => {

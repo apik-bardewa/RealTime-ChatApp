@@ -24,7 +24,7 @@ function useCurrentUser() {
         };
 
         fetchUser();
-    }, []); // ✅ FIXED (RUN ONLY ONCE)
+    }, []); // RUN ONLY ONCE
 }
 
 export default useCurrentUser;
