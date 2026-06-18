@@ -16,7 +16,7 @@ const isAuth = (req, res, next) => {
 
         console.log("decoded token:", verifyToken);
 
-        // ✅ FIX: support both possible keys
+        // support both possible keys
         req.userId = verifyToken.userId || verifyToken.userid;
 
         if (!req.userId) {
