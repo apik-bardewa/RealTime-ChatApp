@@ -4,7 +4,7 @@ import { FaPlus } from "react-icons/fa6";
 import { IoIosMore } from "react-icons/io";
 import { FiArrowLeftCircle } from "react-icons/fi";
 import { setSelecteduser } from "../redux/userSlice";
-
+import Friend from "./Friend";
 
 export default function App() {
   const userInfo = useSelector(state=>state.user.userData)
@@ -34,7 +34,7 @@ const reduxOtherUserdata = useSelector(state=>state.user.otherUserdata)
     <div className="h-screen flex bg-gray-100">
 
       {/* Left Panel */}
-      <div className="w-1/4 bg-white border-r p-4">
+      <div className="w-1/4 bg-white border-r p-4 ">
         <div className="flex flex-col items-center">
           <img
             src="https://i.pravatar.cc/100"   //real image chai userInfo.image bata aauxa
@@ -44,6 +44,7 @@ const reduxOtherUserdata = useSelector(state=>state.user.otherUserdata)
           <h2 className="mt-2 font-bold">{userInfo.userName}</h2>
           <p className="text-sm text-gray-500">{userInfo.email}</p>
         </div>
+        <div className="mt-3"><Friend/></div>
         {/* when user click on this button then selected user  info will updateed */}
       <div className="mt-10 flex flex-col gap-5">{reduxOtherUserdata?.map((user)=>(
            <div onClick={()=>dispatch(setSelecteduser(user))} className='flex gap-2 h-[65px] border rounded-md bg-blue-200 text-black'>
@@ -64,6 +65,7 @@ const reduxOtherUserdata = useSelector(state=>state.user.otherUserdata)
       </div>
 
       {/* Right Chat Panel */}
+      <div className="flex flex-col w-full ">
       {reduxSelectedUser && <div className="flex-1 flex flex-col">
         <div className="flex  gap-2 w-full h-[50px] bg-blue-300 rounded-mdp pl-5 pt-3">
            <label><FiArrowLeftCircle size={30} /></label>
@@ -91,7 +93,6 @@ const reduxOtherUserdata = useSelector(state=>state.user.otherUserdata)
           <div className="flex">
             <label className="ml-2 mt-2"><FaPlus /></label>
             <label className="ml-5 mt-2"><IoIosMore /></label>
-
           </div>
           <input
             value={input}
@@ -109,7 +110,7 @@ const reduxOtherUserdata = useSelector(state=>state.user.otherUserdata)
 
       </div>}
 
-      {!reduxSelectedUser && <div className="flex ml-[30%] flex-col items-center justify-center h-screen text-center px-4">
+      {!reduxSelectedUser && <div className="flex flex-col items-center justify-center h-screen text-center px-4">
         <h1 className="text-3xl font-bold text-gray-800">
           Welcome to our ChatApp 
         </h1>
@@ -126,6 +127,9 @@ const reduxOtherUserdata = useSelector(state=>state.user.otherUserdata)
           Thank you for your trust 
         </p>
       </div>}
+      {!reduxSelectedUser && <div className="bg-blue-400 h-[40px] flax justify-center text-white pl-[45%] pt-1">No users are selected</div>}
+      </div>
+
     </div>
   );
 }
