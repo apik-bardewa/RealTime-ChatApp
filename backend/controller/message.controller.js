@@ -51,3 +51,19 @@ export const getMessage = async(req,res)=>{
         res.send(500).json({msg:`get message error ${error}`});
     }
 }
+
+
+export const sendData = async (req,res)=>{
+    try {
+        let email= req.body;
+        const user = await User.findOne({email});
+        if(!user){
+            res.send(400).json({msg:"invalid user"})
+        }
+    
+        res.send(200).josn(user);
+        console.log("userSended",user.data);
+    } catch (error) {
+        res.send(500).json(`add by email get problem ${error}`)
+    }
+}
