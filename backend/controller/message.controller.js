@@ -1,7 +1,6 @@
-import uploadOnCloudinary from "../config/cloudinary";
-import Conversation from "../models/conversation.model";
-import Message from "../models/messege.model";
-
+import Conversation from "../models/conversation.model.js";
+import Message from "../models/messege.model.js";
+import uploadOnCloudinary from "../config/cloudinary.js";
 export const sendMessage=async (req,res)=>{
     try {
         const sender= req.userId;

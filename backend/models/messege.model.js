@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import User from "./user.model";
+// import User from "./user.model";
 
 const messageSchema = new mongoose.Schema({
     sender:{
@@ -20,7 +20,7 @@ const messageSchema = new mongoose.Schema({
         type:String,
         default:""
     }
-},{timestamps:ture})
+},{timestamps:true})
 
 const Message = mongoose.model("message",messageSchema)
 export default Message;
