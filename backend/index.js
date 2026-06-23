@@ -9,6 +9,8 @@ import userRouter from './routes/user.router.js';
 import errorHandler from './middleware/error.middleware.js';
 import rateLimit from 'express-rate-limit'
 import messageRoute from './routes/message.router.js';
+import { getMessages, sendData } from './controller/message.controller.js';
+import isAuth from './middleware/isAuth.js';
 
 
 dns.setServers(["1.1.1.1","8.8.8.8"])
@@ -37,6 +39,8 @@ app.use(limiter)
 app.use("/api/auth",authRouter)
 app.use("/api/user",userRouter)
 app.use("/api/sendmessage",messageRoute)
+app.post("/api/add",isAuth,sendData);
+app.get("/api/messages/:id", isAuth, getMessages);
 
 app.get("/",(req,res)=>{
     res.send("hello guuys")

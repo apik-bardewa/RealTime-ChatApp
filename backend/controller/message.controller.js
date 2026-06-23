@@ -1,6 +1,7 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/messege.model.js";
 import uploadOnCloudinary from "../config/cloudinary.js";
+import User from "../models/user.model.js";
 export const sendMessage=async (req,res)=>{
     try {
         const sender= req.userId;
@@ -37,33 +38,49 @@ export const sendMessage=async (req,res)=>{
     }
 }
 
-export const getMessage = async(req,res)=>{
-    try {
-        let sender= req.userId;
-        let {receiver} = req.params
-        let conversation= await Conversation.findOne({participant:{$all:[sender,receiver]}}).populate("message")
-        
-        res.send(201).json(conversation?.message);
-        if(!conversation){
-            res.send(400).json({msg:"error occured to find chat "})
-        }
-    } catch (error) {
-        res.send(500).json({msg:`get message error ${error}`});
-    }
-}
 
 
-export const sendData = async (req,res)=>{
-    try {
-        let email= req.body;
-        const user = await User.findOne({email});
-        if(!user){
-            res.send(400).json({msg:"invalid user"})
-        }
-    
-        res.send(200).josn(user);
-        console.log("userSended",user.data);
-    } catch (error) {
-        res.send(500).json(`add by email get problem ${error}`)
+export const getMessages = async (req, res) => {
+  try {
+    const senderId = req.userId;          // from isAuth
+    const receiverId = req.params.id;     // selected user's _id
+
+    // Find conversation where both users are participants
+    const conversation = await Conversation.findOne({
+      participant: { $all: [senderId, receiverId] }
+    }).populate("message");
+
+    if (!conversation) {
+      return res.status(200).json([]); // no messages yet, return empty
     }
-}
+
+    res.status(200).json(conversation.message);
+
+  } catch (error) {
+    console.error("getMessages error:", error);
+    res.status(500).json({ msg: error.message });
+  }
+};
+
+export const sendData = async (req, res) => {
+  try {
+    const { enteremail } = req.body;
+
+    const user = await User.findOne({ email: enteremail });
+
+    if (!user) {
+      return res.status(400).json({ msg: "User not found" });
+    }
+
+    // ✅ req.userId set by your isAuth middleware
+    // if (user._id.toString() === req.userId.toString()) {
+    //   return res.status(400).json({ msg: "You cannot add yourself" });
+    // }
+
+    res.status(200).json(user);
+
+  } catch (error) {
+    console.error("sendData error:", error);
+    res.status(500).json({ msg: `Error: ${error.message}` });
+  }
+};
