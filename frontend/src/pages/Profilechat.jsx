@@ -1,36 +1,68 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaPlus } from "react-icons/fa6";
 import { IoIosMore } from "react-icons/io";
 import { FiArrowLeftCircle } from "react-icons/fi";
-import { setOtheruser, setSelecteduser } from "../redux/userSlice";
+import { setSelecteduser } from "../redux/userSlice";
 import Friend from "./Friend";
 import axios from "axios";
 import { serverurl } from "../main";
+import { connectSocket, disconnectSocket } from "../socket";
 
-export default function App() {
+export default function Profilechat() {
   const userInfo = useSelector((state) => state.user.userData);
   const dispatch = useDispatch();
   const reduxSelectedUser = useSelector((state) => state.user.selectedUser);
 
   const [searchInput, setSearchInput] = useState("");
   const [messageInput, setMessageInput] = useState("");
-  const [messages, setMessages] = useState([]);         // ✅ empty by default
+  const [messages, setMessages] = useState([]);
   const [friendsList, setFriendsList] = useState([]);
   const [searchError, setSearchError] = useState("");
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const messagesEndRef = useRef(null);
 
-  // ✅ Fetch messages whenever selected user changes
+  // ✅ Connect socket when user logs in
+  useEffect(() => {
+    if (userInfo?._id) {
+      const socket = connectSocket(userInfo._id);
+
+      socket.on("newMessage", (newMsg) => {
+        setMessages((prev) => {
+          const isFromSelectedUser =
+            newMsg.sender === reduxSelectedUser?._id ||
+            newMsg.sender?._id === reduxSelectedUser?._id;
+          if (isFromSelectedUser) {
+            return [...prev, newMsg];
+          }
+          return prev;
+        });
+      });
+
+      return () => {
+        disconnectSocket();
+      };
+    }
+  }, [userInfo?._id]);
+
+  // ✅ Auto-scroll to latest message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // ✅ Fetch messages when selected user changes
   useEffect(() => {
     if (!reduxSelectedUser?._id) return;
 
     const fetchMessages = async () => {
       setLoadingMessages(true);
+
       try {
         const response = await axios.get(
-          `${serverurl}/api/messages/${reduxSelectedUser._id}`,
-          { withCredentials: true }
+          `${serverurl}/api/sendmessage/${reduxSelectedUser._id}`,
+          { withCredentials: true },
         );
+
         setMessages(response.data);
       } catch (error) {
         console.error("Failed to fetch messages:", error);
@@ -50,7 +82,7 @@ export default function App() {
       const response = await axios.post(
         `${serverurl}/api/add`,
         { enteremail: searchInput },
-        { withCredentials: true }
+        { withCredentials: true },
       );
       const foundUser = response.data;
       const alreadyAdded = friendsList.some((f) => f._id === foundUser._id);
@@ -61,21 +93,29 @@ export default function App() {
       }
       setSearchInput("");
     } catch (error) {
-      const msg = error.response?.data?.msg || "User not found or an error occurred.";
+      const msg =
+        error.response?.data?.msg || "User not found or an error occurred.";
       setSearchError(msg);
     }
   };
 
-  const sendMessage = () => {
-    if (!messageInput.trim()) return;
-    // will be replaced with actual API call later
-    setMessages((prev) => [
-      ...prev,
-      { _id: Date.now(), message: messageInput, sender: userInfo._id },
-    ]);
-    setMessageInput("");
+  const sendMessage = async () => {
+    if (!messageInput.trim() || !reduxSelectedUser?._id) return;
+    try {
+      const response = await axios.post(
+        `${serverurl}/api/sendmessage/${reduxSelectedUser._id}`, // ✅ receiver in URL
+        { message: messageInput }, // ✅ only message in body
+        { withCredentials: true },
+      );
+      setMessages((prev) => [...prev, response.data]);
+      setMessageInput("");
+    } catch (error) {
+      console.error(
+        "Failed to send message:",
+        error.response?.data || error.message,
+      );
+    }
   };
-
   return (
     <div className="h-screen flex bg-gray-100">
       {/* Left Panel */}
@@ -117,7 +157,9 @@ export default function App() {
               key={user._id}
               onClick={() => dispatch(setSelecteduser(user))}
               className={`cursor-pointer rounded-xl transition-all duration-200 ${
-                reduxSelectedUser?._id === user._id ? "ring-2 ring-blue-500" : ""
+                reduxSelectedUser?._id === user._id
+                  ? "ring-2 ring-blue-500"
+                  : ""
               }`}
             >
               <Friend userInfo={user} />
@@ -128,31 +170,36 @@ export default function App() {
 
       {/* Right Chat Panel */}
       <div className="flex flex-col w-full">
-        {reduxSelectedUser && (
+        {reduxSelectedUser ? (
           <div className="flex-1 flex flex-col h-screen">
             <div className="flex gap-2 items-center w-full h-[50px] bg-blue-300 pl-5">
               <button onClick={() => dispatch(setSelecteduser(null))}>
                 <FiArrowLeftCircle size={28} />
               </button>
-              <span className="text-xl">{reduxSelectedUser?.userName || "User"}</span>
+              <span className="text-xl">
+                {reduxSelectedUser?.userName || "User"}
+              </span>
             </div>
 
-            {/* Messages */}
             <div className="flex-1 p-4 overflow-y-auto space-y-2">
               {loadingMessages && (
-                <p className="text-center text-gray-400 text-sm">Loading messages...</p>
+                <p className="text-center text-gray-400 text-sm">
+                  Loading messages...
+                </p>
               )}
 
               {!loadingMessages && messages.length === 0 && (
-                <p className="text-center text-gray-400 text-sm">No messages yet. Say hi!</p>
+                <p className="text-center text-gray-400 text-sm">
+                  No messages yet. Say hi!
+                </p>
               )}
 
               {messages.map((msg) => (
                 <div
                   key={msg._id}
                   className={`max-w-xs px-4 py-2 rounded-lg text-sm ${
-                    // ✅ compare sender._id or sender depending on populate
-                    msg.sender === userInfo._id || msg.sender?._id === userInfo._id
+                    msg.sender === userInfo._id ||
+                    msg.sender?._id === userInfo._id
                       ? "bg-blue-500 text-white ml-auto"
                       : "bg-gray-300"
                   }`}
@@ -160,11 +207,16 @@ export default function App() {
                   {msg.message}
                 </div>
               ))}
+              <div ref={messagesEndRef} />
             </div>
 
             <div className="p-3 border-t flex gap-2 items-center">
-              <label className="ml-2"><FaPlus /></label>
-              <label className="ml-3"><IoIosMore /></label>
+              <label className="ml-2">
+                <FaPlus />
+              </label>
+              <label className="ml-3">
+                <IoIosMore />
+              </label>
               <input
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
@@ -180,15 +232,21 @@ export default function App() {
               </button>
             </div>
           </div>
-        )}
-
-        {!reduxSelectedUser && (
+        ) : (
           <>
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
-              <h1 className="text-3xl font-bold text-gray-800">Welcome to ChatApp</h1>
-              <p className="mt-3 text-gray-600">Connect and chat with friends in real time.</p>
-              <p className="mt-2 text-gray-500">Fast, secure, and always connected.</p>
-              <p className="mt-4 text-sm text-gray-400">Thank you for your trust</p>
+              <h1 className="text-3xl font-bold text-gray-800">
+                Welcome to ChatApp
+              </h1>
+              <p className="mt-3 text-gray-600">
+                Connect and chat with friends in real time.
+              </p>
+              <p className="mt-2 text-gray-500">
+                Fast, secure, and always connected.
+              </p>
+              <p className="mt-4 text-sm text-gray-400">
+                Thank you for your trust
+              </p>
             </div>
             <div className="bg-blue-400 h-[40px] flex justify-center items-center text-white">
               No users are selected
