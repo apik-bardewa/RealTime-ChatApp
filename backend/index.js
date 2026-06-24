@@ -12,7 +12,8 @@ import messageRoute from './routes/message.router.js';
 import { getMessages, sendData } from './controller/message.controller.js';
 import isAuth from './middleware/isAuth.js';
 import { createServer } from 'http';           // ✅ new
-import { Server } from 'socket.io';            // ✅ new
+// import { Server } from 'socket.io';            // ✅ new
+import { initSocket } from './socket.js';
 
 dns.setServers(["1.1.1.1","8.8.8.8"]);
 dotenv.config();
@@ -21,13 +22,14 @@ const app = express();
 const httpServer = createServer(app);          // ✅ wrap express in http server
 
 // ✅ Socket.io setup
-const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:5173",
-    credentials: true,
-    methods: ['GET', 'POST']
-  }
-});
+const io = initSocket(httpServer);
+// const io = new Server(httpServer, {
+//   cors: {
+//     origin: "http://localhost:5173",
+//     credentials: true,
+//     methods: ['GET', 'POST']
+//   }
+// });
 
 const port = process.env.PORT;
 
