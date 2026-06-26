@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { FaPlus } from "react-icons/fa6";
-import { IoIosMore } from "react-icons/io";
+// import { FaPlus } from "react-icons/fa6";
+// import { IoIosMore } from "react-icons/io";
 import { FiArrowLeftCircle } from "react-icons/fi";
 import { setSelecteduser } from "../redux/userSlice";
 import Friend from "./Friend";
 import axios from "axios";
 import { serverurl } from "../main";
 import { connectSocket, disconnectSocket } from "../socket";
+import ImageUpload from "./Image";
 
 export default function Profilechat() {
   const userInfo = useSelector((state) => state.user.userData);
@@ -22,7 +23,7 @@ export default function Profilechat() {
   const [loadingMessages, setLoadingMessages] = useState(false);
   const messagesEndRef = useRef(null);
 
-  // ✅ Connect socket when user logs in
+  //  Connect socket when user logs in
   useEffect(() => {
     if (userInfo?._id) {
       const socket = connectSocket(userInfo._id);
@@ -45,12 +46,12 @@ export default function Profilechat() {
     }
   }, [userInfo?._id]);
 
-  // ✅ Auto-scroll to latest message
+  //  Auto-scroll to latest message
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ✅ Fetch messages when selected user changes
+  //  Fetch messages when selected user changes
   useEffect(() => {
     if (!reduxSelectedUser?._id) return;
 
@@ -103,8 +104,8 @@ export default function Profilechat() {
     if (!messageInput.trim() || !reduxSelectedUser?._id) return;
     try {
       const response = await axios.post(
-        `${serverurl}/api/sendmessage/${reduxSelectedUser._id}`, // ✅ receiver in URL
-        { message: messageInput }, // ✅ only message in body
+        `${serverurl}/api/sendmessage/${reduxSelectedUser._id}`, //  receiver in URL
+        { message: messageInput }, //  only message in body
         { withCredentials: true },
       );
       setMessages((prev) => [...prev, response.data]);
@@ -116,6 +117,7 @@ export default function Profilechat() {
       );
     }
   };
+  const [show, setshow] = useState(true);
   return (
     <div className="h-screen flex bg-gray-100">
       {/* Left Panel */}
@@ -212,10 +214,11 @@ export default function Profilechat() {
 
             <div className="p-3 border-t flex gap-2 items-center">
               <label className="ml-2">
-                <FaPlus />
+                {/* <FaPlus /> */}
               </label>
               <label className="ml-3">
-                <IoIosMore />
+                {/* <IoIosMore /> */}
+                {show && <ImageUpload />}
               </label>
               <input
                 value={messageInput}
